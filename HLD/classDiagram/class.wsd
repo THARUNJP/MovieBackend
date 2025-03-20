@@ -1,0 +1,26 @@
+@startuml MyFunctionDiagram
+
+package "cmd/api/main_go" {
+  class main {
+    Router(app)
+  }
+}
+
+package "router/router_go" {
+  class "Router(app *fiber_App)" {
+    app.Get("/auth", Auth)
+    app.Post("/register", Register)
+  }
+}
+
+package "internal/control" {
+  class Control {
+    Auth(c *fiber.Ctx) error
+    Register(c *fiber.Ctx) error
+  }
+}
+
+main --> "Router(app *fiber_App)"
+"Router(app *fiber_App)" --> Control : calls controller func
+
+@enduml

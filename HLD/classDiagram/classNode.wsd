@@ -1,0 +1,24 @@
+@startuml MyFunctionDiagram
+package "Root" {
+  class index_js {
+    app.use("/", router)
+  }
+}
+
+package "router" {
+  class router_js {
+    app.get("/auth", Auth)
+    app.post("/register", Register)
+  }
+}
+
+package "controller" {
+  class control_js {
+    Auth(req, res)
+    Register(req, res)
+  }
+}
+
+index_js --> router_js
+router_js --> control_js
+@enduml

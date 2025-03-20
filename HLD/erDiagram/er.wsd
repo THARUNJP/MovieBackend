@@ -1,0 +1,77 @@
+@startuml ER_DIAGRAM
+
+entity user {
+  **user_id**: UUID <<PK>>
+  --
+  name: VARCHAR(100)
+  email: VARCHAR(100) UNIQUE
+  mobile_no  VARCHAR(10) UNIQUE
+  password: VARCHAR(100)
+  created_at: DATETIME DEFAULT getDate()
+  created_by: VARCHAR(100) DEFAULT 'user'
+  is_active: BOOLEAN
+}
+entity admin {
+**admin_id** :UUID <<PK>>
+admin_name :VARCHAR(100)
+created_at: DATETIME DEFAULT getDate()
+created_by: VARCHAR(100) DEFAULT 'user'
+updated_at: DATETIME DEFAULT getDate()
+updated_by: VARCHAR(100) DEFAULT 'user'
+is_active: BOOLEAN
+
+}
+
+entity movies {
+  **movie_id**: UUID <<PK>>
+  --
+  movie_name: VARCHAR(100) NOT NULL
+  movie_genre: VARCHAR(255) NOT NULL
+  image_url: TEXT 
+  is_active: BOOLEAN
+}
+
+  entity movie_details {
+  **detail_id**: UUID <<PK>>
+  --
+  movie_id: UUID <<FK>>
+  description: TEXT
+  cast: JSONB
+  language: VARCHAR(50)
+  release_date: DATE
+}
+
+
+entity location {
+  **location_id**: UUID <<PK>>
+  --
+  location_name: VARCHAR(100)
+  is_active: BOOLEAN
+}
+
+entity areas {
+  **area_id**: UUID <<PK>>
+  --
+  area_name: VARCHAR(255)
+  location_id: UUID <<FK>>
+  created_at: DATETIME DEFAULT getDate()
+  created_by: VARCHAR(100) DEFAULT 'admin'
+  updated_at: DATETIME DEFAULT getDate()
+  updated_by: VARCHAR(100) DEFAULT 'admin'
+  is_active: BOOLEAN
+}
+
+entity theaters {
+  **theater_id**: UUID <<PK>>
+  --
+  theater_name: VARCHAR(100)
+  created_at: DATETIME DEFAULT getDate()
+  created_by: VARCHAR(100) DEFAULT 'admin'
+  updated_at: DATETIME DEFAULT getDate()
+  updated_by: VARCHAR(100) DEFAULT 'admin'
+  is_active: BOOLEAN
+}
+
+location ||--o{ areas : One location can have many areas but one area id can only have one location
+
+@enduml
