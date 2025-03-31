@@ -1,12 +1,20 @@
 package control
 
 import (
-	"fmt"
+	"MovieBack/config"
+	"MovieBack/internal/custom"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func GetMovies(c *fiber.Ctx) error {
-	fmt.Print("getMovies")
-	return c.JSON("Movies List")
+
+	getData, err := config.GetRecords("SELECT * FROM movies", nil)
+	if err != nil {
+		return c.SendStatus(fiber.ErrBadGateway.Code)
+	} else {
+		custom.Map(getData)
+		return c.Status(200).JSON(getData)
+	}
+
 }

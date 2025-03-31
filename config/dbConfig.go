@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/joho/godotenv"
 )
 
 var (
@@ -17,7 +16,7 @@ var (
 )
 
 func IntializeDB() error {
-	godotenv.Load()
+
 	connectionString = os.Getenv("DB_CONNECTION_STRING")
 
 	var err error

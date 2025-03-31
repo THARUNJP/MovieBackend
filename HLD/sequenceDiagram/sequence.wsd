@@ -1,0 +1,13 @@
+@startuml Refresh_token
+
+actor u as "User"
+participant FE as "Frontend"
+participant BE as "Backend"
+
+u->FE:user request
+FE->BE:request passed with token
+
+
+
+
+@enduml

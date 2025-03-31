@@ -1,6 +1,8 @@
 package types
 
-import "encoding/json"
+import (
+	"github.com/google/uuid"
+)
 
 type Slice []interface{}
 
@@ -12,6 +14,13 @@ type UserStruct struct {
 }
 
 type MovieStruct struct {
-	MovieName    string          `json:"movie_name"`
-	MovieDetails json.RawMessage `json:"movie_details"` // Handles JSON data
+	MovieID    uuid.UUID `json:"movie_id"`
+	MovieName  string    `json:"movie_name"`
+	MovieGenre string    `json:"movie_genre"`
+	ImgUrl     string    `json:"img_url"`
+	IsActive   bool      `json:"is_active"`
+}
+
+type MovieIdRequest struct {
+	ID string `json:"id"`
 }

@@ -1,48 +1,64 @@
 package config
 
 import (
+	"MovieBack/internal/types"
 	"context"
 	"fmt"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func GetRecords(query string) (any, error) {
-
-	rows, err := DB.Acquire(context.Background())
-
+func GetRecords(query string, params types.Slice) ([]map[string]interface{}, error) {
+	// Acquire connection from pool
+	conn, err := DB.Acquire(context.Background())
 	if err != nil {
-		return fmt.Printf("err in connecting")
+		return nil, fmt.Errorf("failed to acquire connection: %v", err)
 	}
-	defer rows.Release()
-	result, err := rows.Query(context.Background(), query)
+	defer conn.Release()
 
+	// Execute query
+	rows, err := conn.Query(context.Background(), query, params...)
 	if err != nil {
-		return fmt.Printf("err in query %v", err)
-
+		return nil, fmt.Errorf("query failed: %v", err)
 	}
+	defer rows.Close()
 
-	var data []map[string]any // Slice to store all rows
+	// Prepare result slice
+	var results []map[string]interface{}
+	fieldDescriptions := rows.FieldDescriptions()
 
-	columns := result.FieldDescriptions()
-	for result.Next() {
-		values, err := result.Values()
+	// Process each row
+	for rows.Next() {
+		values, err := rows.Values()
 		if err != nil {
-			return nil, fmt.Errorf("error in iteration: %v", err)
+			return nil, fmt.Errorf("failed to get row values: %v", err)
 		}
 
-		rowData := make(map[string]any) // Map to store row data
+		row := make(map[string]interface{})
+		for i, fd := range fieldDescriptions {
+			colName := string(fd.Name)
+			val := values[i]
 
-		for i := range columns {
-			rowData[string(columns[i].Name)] = values[i] // Convert column name to string
+			// Convert UUID bytes to string if needed
+			if fd.DataTypeOID == pgtype.UUIDOID {
+				if uuidBytes, ok := val.([16]byte); ok {
+					row[colName] = fmt.Sprintf("%x-%x-%x-%x-%x",
+						uuidBytes[0:4],
+						uuidBytes[4:6],
+						uuidBytes[6:8],
+						uuidBytes[8:10],
+						uuidBytes[10:16])
+					continue
+				}
+			}
+			row[colName] = val
 		}
-
-		data = append(data, rowData) // Append row data to the slice
+		results = append(results, row)
 	}
 
-	errCheck := result.Err()
-	if errCheck != nil {
-		return nil, fmt.Errorf("erroor in query %v", errCheck)
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("rows iteration error: %v", err)
 	}
 
-	return data, nil
-
+	return results, nil
 }
