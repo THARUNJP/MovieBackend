@@ -16,7 +16,9 @@ func main() {
 	app := fiber.New()
 
 	config.IntializeDB()
+	config.InitRedis()
 	defer config.CloseDB()
+	defer config.CloseRedis()
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "http://localhost:3000",      // Your frontend URL (adjust if different)

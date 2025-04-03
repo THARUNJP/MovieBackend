@@ -56,6 +56,7 @@ func Login(c *fiber.Ctx) error {
 	})
 
 	go InsertRefreshToken(string(refToken), userData[0]["user_id"].(string))
+
 	return c.Status(200).JSON(fiber.Map{"status": "success", "token": token})
 
 }

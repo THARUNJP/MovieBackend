@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -23,4 +25,9 @@ type MovieStruct struct {
 
 type MovieIdRequest struct {
 	ID string `json:"id"`
+}
+
+type UserRefrestToken struct {
+	RefToken  string        `json:"value"`
+	ExpiresAt time.Duration `json:"ttl"`
 }

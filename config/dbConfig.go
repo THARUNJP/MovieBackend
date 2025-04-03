@@ -31,7 +31,7 @@ func IntializeDB() error {
 			fmt.Printf("db error %v", dbError)
 		}
 
-		fmt.Print("db connected successfully")
+		fmt.Println("db connected successfully")
 	})
 
 	return err
