@@ -15,7 +15,7 @@ var (
 	connectionString string
 )
 
-func IntializeDB() error {
+func IntializeDB() (*pgxpool.Pool, error) {
 
 	connectionString = os.Getenv("DB_CONNECTION_STRING")
 
@@ -34,7 +34,7 @@ func IntializeDB() error {
 		fmt.Println("db connected successfully")
 	})
 
-	return err
+	return DB, err
 
 }
 
@@ -46,36 +46,3 @@ func CloseDB() {
 	}
 
 }
-
-// func ExecuteQuery(query string, params any) ([]map[string]interface{}, error) {
-// 	if err != nil {
-// 		return nil, fmt.Errorf("database is unreachable: %v", err)
-// 	}
-// 	client, err := db.Acquire(context.Background())
-// 	if err != nil {
-// 		return nil, fmt.Errorf("failed to acquire connection: %v", err)
-// 	}
-// 	defer client.Release()
-// 	rows, err := client.Query(context.Background(), query)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("query execution failed: %v", err)
-// 	}
-// 	defer rows.Close()
-
-// 	// Process the results into a slice of maps
-// 	var results []map[string]interface{}
-// 	for rows.Next() {
-// 		values, err := rows.Values()
-// 		if err != nil {
-// 			return nil, err
-// 		}
-
-// 		rowMap := make(map[string]interface{})
-// 		for i, field := range rows.FieldDescriptions() {
-// 			rowMap[string(field.Name)] = values[i]
-// 		}
-// 		results = append(results, rowMap)
-// 	}
-
-// 	return results, nil
-// }

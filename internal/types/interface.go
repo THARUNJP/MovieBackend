@@ -19,7 +19,6 @@ type MovieStruct struct {
 	MovieID    uuid.UUID `json:"movie_id"`
 	MovieName  string    `json:"movie_name"`
 	MovieGenre string    `json:"movie_genre"`
-	ImgUrl     string    `json:"img_url"`
 	IsActive   bool      `json:"is_active"`
 }
 

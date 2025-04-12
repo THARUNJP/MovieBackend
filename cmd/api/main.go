@@ -2,9 +2,9 @@ package main
 
 import (
 	"MovieBack/config"
+	"MovieBack/internal/container"
 	"MovieBack/router"
 	"fmt"
-	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -13,9 +13,14 @@ import (
 
 func main() {
 	godotenv.Load()
+	db, err := config.IntializeDB()
+	if err != nil {
+		panic(err)
+	}
+
+	config.RunMigrations()
 	app := fiber.New()
 
-	config.IntializeDB()
 	config.InitRedis()
 	defer config.CloseDB()
 	defer config.CloseRedis()
@@ -26,13 +31,11 @@ func main() {
 		AllowHeaders:     "Content-Type,Authorization", // Allowed headers
 		AllowCredentials: true,                         // Allow cookies to be sent
 	}))
-	router.Routes(app)
+	c := container.NewContainer(db)
+	router.Routes(app, c)
 
 	fmt.Print("port is running in 8000")
 
-	err := app.Listen(":8000")
-	if err != nil {
-		log.Fatal("Error in running server:", err)
-	}
+	app.Listen(":8000")
 
 }
